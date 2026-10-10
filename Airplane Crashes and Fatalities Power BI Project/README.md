@@ -40,6 +40,50 @@ https://github.com/user-attachments/assets/f90775cf-ef56-41d6-9a07-efeef908d519
 
 ### 🛠️ Power BI Skills & Dashboard Setup
 
+To turn over a century of plane crash records into one clear story, I used Power BI's data cleaning, data modeling, DAX, and dashboard features:
+
+* **Data Cleaning & Preparation (Power Query):** Loaded the `Airplane` table from the Excel file, with 5,268 accidents from 1908 to 2009.
+  * Set the right data types, such as `Date` as date, `Time` as time, and `Aboard`, `Fatalities` and `Ground_Fatalities` as whole numbers
+  * **Split the `Route` column** at the dash into two new columns, `Origin` and `Destination`, so every crash has a start and an end city
+  * Added a **Year** column from the date, then a **Decade** column (e.g. 1950, 1960) so crashes can be grouped by decade
+  * Replaced blank and empty `Operator` values with "Unknown"
+  * Added an **Operator Category** column that sorts each crash into **Military**, **Commercial/Civilian**, or **Unknown**
+  
+  <img width="155" height="113" alt="image" src="https://github.com/user-attachments/assets/db408b24-77cf-4af0-a42e-57c6b3f30376" />
+
+  * Built a separate **Flight Routes** table by unpivoting `Origin` and `Destination` into one `City` column, with a `Path_ID`, `Point Order` and `Point Label` for each stop, so crash routes can be drawn on a map.
+ 
+<img width="929" height="401" alt="image" src="https://github.com/user-attachments/assets/7203d89c-a1d2-4b40-85bf-0eb1879c8b89" />
+
+* **Data Modeling:** Kept the model simple. A `Calendar` date table (built from the first to the last accident date) connects to the `Airplane` table with a one-to-many relationship on `Date`, so every chart can be sliced by date. The `Flight Routes` table is used for the route map visual.
+
+<img width="653" height="343" alt="image" src="https://github.com/user-attachments/assets/0af78223-5597-45a3-8acd-1bb7f9d9f7da" />
+
+* **DAX Measures:** Kept all measures in one dedicated `Measures (2)` table:
+
+| Measure | What it does | DAX |
+|---|---|---|
+| **Total Accidents** | Counts every recorded crash | `COUNTROWS(Airplane)` |
+| **Total Persons on Board** | Adds up everyone on the planes | `SUM(Airplane[Aboard])` |
+| **Total Fatalities** | Adds up all deaths on board | `SUM(Airplane[Fatalities])` |
+| **Total Ground Fatalities** | Adds up deaths on the ground | `SUM(Airplane[Ground_Fatalities])` |
+| **Total Survivors** | People on board minus deaths | `[Total Persons on Board] - [Total Fatalities]` |
+| **Fatality Rate** | Share of people on board who died | `DIVIDE([Total Fatalities], [Total Persons on Board], 0)` |
+| **Survival Rate** | Share of people on board who lived | `DIVIDE([Total Survivors], [Total Persons on Board], 0)` |
+
+<img width="211" height="153" alt="image" src="https://github.com/user-attachments/assets/34e60a5f-7f6e-40a0-b731-155b8f2474c9" />
+
+* **Key Metric Tracking:** Created KPI cards for the main numbers: **Total Accidents (5,268), Total Persons on Board (144,551), Total Fatalities (105,479), Total Survivors (39,072), Fatality Rate (73%) and Survival Rate (27%).**
+
+<img width="316" height="67" alt="image" src="https://github.com/user-attachments/assets/da6d71fd-df41-4a7b-945a-cadbe0bb29ea" />
+
+* **Chart Analysis:** Built visuals to show survival rate by decade, crashes by operator, crashes by operator category, and where the crashes happened on a map.
+
+*It's all in the dashboard image*
+
+* **Interactive Slicers:** Added slicers so users can filter the whole dashboard by time period and other details.
+
+<img width="353" height="62" alt="image" src="https://github.com/user-attachments/assets/c2dfe8f7-2afe-4acc-b215-521ccc95db07" />
 
 ### 📈 Strategic Recommendations & Lessons Learned
 
@@ -52,7 +96,6 @@ https://github.com/user-attachments/assets/f90775cf-ef56-41d6-9a07-efeef908d519
 * **Improve the quality of historical records:** More complete information on accident causes, flight hours, aircraft models, and operational conditions would support deeper analysis and more reliable comparisons.
 
 * **Include newer data for current insights:** This dataset ends in 2009. Adding more recent records would allow the analysis to explore aviation accident patterns beyond the period covered by this project.
-
 
 ### 📂 How to Open and Explore the Dashboard
 
